@@ -1,5 +1,7 @@
 import cv2
 import os
+import string
+import random
 # rtsp://192.168.10.28:554
 
 
@@ -19,6 +21,9 @@ class ImgCrop:
         self.width = self.vid.get(cv2.CAP_PROP_FRAME_WIDTH)
         self.height = self.vid.get(cv2.CAP_PROP_FRAME_HEIGHT)
         self.cnt = 0
+
+    def id_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
+        return ''.join(random.choice(chars) for _ in range(size))
 
     def get_crop_area(self, event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDOWN:
@@ -49,8 +54,8 @@ class ImgCrop:
             self.cnt += 1
             ret, frame = self.vid.read()
             if self.croping and self.cnt % 10 == 0:
-                fileName = '{}{}_{}.jpg'.format(
-                    self.save_path, self.cam_indx, self.cnt)
+                fileName = '{}{}_{}_{}.jpg'.format(
+                    self.save_path, self.cam_indx, self.cnt, self.id_generator())
                 img_crop = frame[self.iy:self.ey, self.ix:self.ex]
 
                 if self.crop_resize_w > 0 and self.crop_resize_h > 0:
